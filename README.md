@@ -14,7 +14,7 @@ This system pulls athlete data directly from the Hawkin Dynamics API, processes 
 
 | Individual Reports | Team Reports |
 |-------------------|--------------|
-| 4+ assessments per athlete | As many athletes per session |
+| 4+ assessments per athlete | Up to 26+ athletes per session |
 | Force-time curve visualizations | Team performance dashboard |
 | Asymmetry analysis across all tests | Quadrant-based athlete profiling |
 | Benchmark comparisons | Injury risk flagging |
@@ -28,15 +28,15 @@ This system pulls athlete data directly from the Hawkin Dynamics API, processes 
 
 **Performance Dashboard** — Key metrics at a glance with multiple assessment types:
 
-![Individual Dashboard](samples/individual_dashboard.png)
+![Individual Dashboard](Samples/individual_dashboard.png)
 
 **Force-Time Curves** — Bilateral force traces with real-time asymmetry tracking:
 
-![CMJ Assessment](samples/individual_cmj.png)
+![CMJ Assessment](Samples/individual_cmj.png)
 
 **Asymmetry Summary** — Cross-test comparison with status flags:
 
-![Asymmetry Summary](samples/individual_asymmetry.png)
+![Asymmetry Summary](Samples/individual_asymmetry.png)
 
 ---
 
@@ -44,19 +44,19 @@ This system pulls athlete data directly from the Hawkin Dynamics API, processes 
 
 **Team Performance Dashboard** — Baseline metrics with descriptive statistics:
 
-![Team Dashboard](samples/team_dashboard.png)
+![Team Dashboard](Samples/team_dashboard.png)
 
 **Performance Profiles** — Quadrant scatter plots categorizing athletes by explosiveness and force application strategy:
 
-![Performance Profiles](samples/team_profiles.png)
+![Performance Profiles](Samples/team_profiles.png)
 
 **Injury Risk Assessment** — Landing force and asymmetry flags with actionable status levels:
 
-![Injury Risk](samples/team_injury_risk.png)
+![Injury Risk](Samples/team_injury_risk.png)
 
 **Training Focus Matrix** — Profile-based training recommendations:
 
-![Training Focus](samples/team_training_focus.png)
+![Training Focus](Samples/team_training_focus.png)
 
 ---
 
