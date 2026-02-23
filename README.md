@@ -14,7 +14,7 @@ This system pulls athlete data directly from the Hawkin Dynamics API, processes 
 
 | Individual Reports | Team Reports |
 |-------------------|--------------|
-| 4+ assessments per athlete | Up to 26+ athletes per session |
+| 4+ assessments per athlete | As many athletes per session |
 | Force-time curve visualizations | Team performance dashboard |
 | Asymmetry analysis across all tests | Quadrant-based athlete profiling |
 | Benchmark comparisons | Injury risk flagging |
