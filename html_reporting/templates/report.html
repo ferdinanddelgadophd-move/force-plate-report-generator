@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ athlete.name }} — Performance Report | Move, Measure, Analyze</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    {% if inline_styles %}
+    <style>{{ screen_css | safe }}</style>
+    <style media="print">{{ print_css | safe }}</style>
+    {% else %}
+    <link rel="stylesheet" href="{{ styles_dir }}/screen.css">
+    <link rel="stylesheet" href="{{ styles_dir }}/print.css" media="print">
+    {% endif %}
+</head>
+<body>
+
+{# ================================================================ #}
+{# PAGE 1: PERFORMANCE DASHBOARD (with athlete info)               #}
+{# ================================================================ #}
+<section class="page dashboard-page">
+    {# Dashboard Header with Brand #}
+    <div class="page-header">
+        <div class="header-bar dashboard-header-bar">
+            <h2>PERFORMANCE DASHBOARD</h2>
+            <div class="header-brand-inline">
+                MOVE<span class="brand-sep">,</span> MEASURE<span class="brand-sep">,</span> ANALYZE
+            </div>
+        </div>
+    </div>
+
+    {# Compact Athlete Info Strip #}
+    <div class="athlete-strip">
+        <div class="athlete-strip-identity">
+            <div class="strip-athlete-name">{{ athlete.name }}</div>
+            <div class="strip-athlete-meta">
+                {% if athlete.team %}{{ athlete.team }}{% endif %}
+                {% if athlete.team and athlete.sport %} &bull; {% endif %}
+                {% if athlete.sport %}{{ athlete.sport }}{% endif %}
+            </div>
+        </div>
+        <div class="athlete-strip-details">
+            <div class="strip-detail">
+                <span class="strip-detail-label">DATE</span>
+                <span class="strip-detail-value">{{ assessment.date_display }}</span>
+            </div>
+            <div class="strip-detail">
+                <span class="strip-detail-label">ASSESSMENT</span>
+                <span class="strip-detail-value">{{ assessment.type }}</span>
+            </div>
+            {% if athlete.body_weight_lb %}
+            <div class="strip-detail">
+                <span class="strip-detail-label">BODY WEIGHT</span>
+                <span class="strip-detail-value">{{ athlete.body_weight_lb }} lb ({{ athlete.body_weight_kg }} kg)</span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="dashboard-content">
+        {# Snapshot tiles #}
+        {% if snapshot %}
+        <div class="snapshot-grid">
+            {% for tile in snapshot %}
+            <div class="snapshot-tile{% if tile.status is defined %} tile-{{ tile.status }}{% endif %}{% if tile.gauge is defined and tile.gauge %} tile-has-gauge{% endif %}">
+                <div class="tile-header">{{ tile.label }}</div>
+                <div class="tile-value">{{ tile.value }}</div>
+                <div class="tile-unit">{{ tile.unit }}</div>
+                {% if tile.delta is defined and tile.delta %}
+                <div class="tile-delta delta-{{ tile.delta.direction }}">
+                    {% if tile.delta.direction == 'up' %}<span class="delta-arrow">&uarr;</span>
+                    {% elif tile.delta.direction == 'down' %}<span class="delta-arrow">&darr;</span>
+                    {% else %}<span class="delta-arrow">&rarr;</span>{% endif %}
+                    {{ tile.delta.value }}
+                </div>
+                {% endif %}
+                {% if tile.gauge is defined and tile.gauge %}
+                <div class="tile-gauge">
+                    <div class="gauge-track">
+                        {% for zone in tile.gauge.zones %}
+                        <div class="gauge-zone gauge-{{ zone.color }}" style="width:{{ zone.width }}%"></div>
+                        {% endfor %}
+                        <div class="gauge-marker" style="left:{{ tile.gauge.marker_pct }}%"></div>
+                    </div>
+                    <div class="gauge-labels">
+                        {% for lbl in tile.gauge.labels %}
+                        <span>{{ lbl }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="tile-interpretation interp-{{ tile.gauge.interp_color }}">{{ tile.gauge.interpretation }}</div>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {# User-written dashboard summary #}
+        {% if ai_summary %}
+        <div class="summary-card avoid-break">
+            <h3 class="section-label">SUMMARY</h3>
+            <p class="summary-text">{{ ai_summary }}</p>
+        </div>
+        {% endif %}
+
+        <div class="dashboard-glossary-note">
+            See <strong>Glossary &amp; Definitions</strong> on the last page for metric explanations.
+        </div>
+    </div>
+
+    {% include 'partials/page_footer.html' %}
+</section>
+
+{# ================================================================ #}
+{# TEST PAGES                                                       #}
+{# ================================================================ #}
+{% for test in tests %}
+<section class="page test-page">
+    <div class="page-header">
+        <div class="header-bar">
+            <h2>{{ test.display_label | upper }} ASSESSMENT</h2>
+        </div>
+    </div>
+
+    <div class="test-content">
+        {# Trial Selection Info Banner #}
+        {% if test.trial_info and test.trial_info.session_date %}
+        <div class="trial-info-banner">
+            <div class="trial-info-content">
+                <span class="trial-info-label">SESSION</span>
+                <span class="trial-info-value">{{ test.trial_info.session_date }}</span>
+                <span class="trial-info-sep">&bull;</span>
+                <span class="trial-info-label">TRIAL</span>
+                <span class="trial-info-value">{{ test.trial_info.trial_time }}</span>
+                {% if test.trial_info.selection_reason %}
+                <span class="trial-info-sep">&bull;</span>
+                <span class="trial-info-reason">{{ test.trial_info.selection_reason }}</span>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        {# Force-Time Plot #}
+        {% if test.force_time_plot %}
+        <div class="chart-container avoid-break">
+            <img src="data:image/png;base64,{{ test.force_time_plot }}"
+                 alt="{{ test.name }} Force-Time Curve"
+                 class="force-time-chart">
+        </div>
+        {% else %}
+        <div class="chart-placeholder avoid-break">
+            <p>Force-time data not available for this test.</p>
+        </div>
+        {% endif %}
+
+        {# Bottom section: Description + Metrics side by side #}
+        <div class="test-bottom-grid">
+            {# Left: About this test #}
+            <div class="about-section avoid-break">
+                <h3 class="section-label">ABOUT THIS TEST</h3>
+                <p class="about-label">WHAT</p>
+                <p class="about-text">{{ test.what }}</p>
+                <p class="about-label">WHY</p>
+                <p class="about-text">{{ test.why }}</p>
+            </div>
+
+            {# Right: Session Averages / Key Metrics #}
+            <div class="metrics-section avoid-break">
+                <h3 class="section-label">
+                    {% if test.metrics_source is defined and test.metrics_source == 'session_avg' %}SESSION AVERAGES{% else %}KEY METRICS{% endif %}
+                    {% if test.n_trials is defined and test.n_trials > 1 %}
+                    <span class="metrics-trial-count">(avg of {{ test.n_trials }})</span>
+                    {% endif %}
+                </h3>
+                {% if test.metrics %}
+                <div class="metrics-list">
+                    {% for m in test.metrics %}
+                    <div class="metric-row">
+                        <div class="metric-label-group">
+                            <span class="metric-label">{{ m.label }}</span>
+                            {% if m.description is defined and m.description %}
+                            <span class="metric-desc">{{ m.description }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="metric-value-group">
+                            <span class="metric-value">{{ m.value }}</span>
+                            {% if m.unit %}
+                            <span class="metric-unit">{{ m.unit }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="no-data">Metric data not available.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        {# User-written summary (Coach's Notes) #}
+        {% if test.interpretation %}
+        <div class="coach-notes avoid-break">
+            <h3 class="section-label">COACH'S NOTES</h3>
+            <p class="interpretation-text">{{ test.interpretation }}</p>
+        </div>
+        {% endif %}
+
+        {# Individual Trials table #}
+        {% if test.trial_table is defined and test.trial_table and test.trial_table | length > 0 %}
+        <div class="trial-table-section avoid-break">
+            <h3 class="section-label">INDIVIDUAL TRIALS</h3>
+            <table class="individual-trial-table">
+                <thead>
+                    <tr>
+                        <th>Trial</th>
+                        {% for m in test.trial_table[0].metrics %}
+                        <th>{{ m.label }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for trial in test.trial_table %}
+                    <tr class="{% if trial.is_best %}trial-best-row{% endif %}">
+                        <td>
+                            {{ trial.trial_num }}
+                            {% if trial.is_best %}<span class="best-trial-star" title="Best trial">&starf;</span>{% endif %}
+                        </td>
+                        {% for m in trial.metrics %}
+                        <td>{{ m.value }} <span class="trial-metric-unit">{{ m.unit }}</span></td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="trial-table-legend">
+                <span class="best-trial-star">&starf;</span> = Best trial (force-time curve &amp; dashboard)
+            </div>
+        </div>
+        {% endif %}
+
+        {# Asymmetry indicators (if any) #}
+        {% if test.asymmetries %}
+        <div class="asymmetry-indicators avoid-break">
+            <div class="asym-mini-header">ASYMMETRY INDICATORS</div>
+            <div class="asym-tags">
+                {% for a in test.asymmetries %}
+                <span class="asym-tag asym-{{ a.status | lower }}">
+                    {{ a.metric }}: {{ a.percent }} {{ a.side }}
+                </span>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    {% include 'partials/page_footer.html' %}
+</section>
+
+{# Trend page (if multiple sessions) #}
+{% if test.has_trend %}
+<section class="page trend-page">
+    <div class="page-header">
+        <div class="header-bar">
+            <h2>{{ test.display_label | upper }} — TRENDS</h2>
+        </div>
+    </div>
+
+    <div class="trend-content">
+        {% if test.trend_plot %}
+        <div class="chart-container avoid-break">
+            <img src="data:image/png;base64,{{ test.trend_plot }}"
+                 alt="{{ test.name }} Trend"
+                 class="trend-chart">
+        </div>
+        {% endif %}
+
+        {% if test.trend_table %}
+        <div class="trend-table-wrap avoid-break">
+            <table class="trend-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        {% for key in test.trend_table[0].metrics.keys() %}
+                        <th>{{ key }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in test.trend_table %}
+                    <tr>
+                        <td>{{ row.date }}</td>
+                        {% for key, val in row.metrics.items() %}
+                        <td>{{ val.value }} {{ val.unit }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+
+    {% include 'partials/page_footer.html' %}
+</section>
+{% endif %}
+{% endfor %}
+
+{# ================================================================ #}
+{# ASYMMETRY SUMMARY PAGE                                           #}
+{# ================================================================ #}
+{% if asymmetry_summary %}
+{# Filter to only Monitor and Address items #}
+{% set flagged = [] %}
+{% for a in asymmetry_summary %}
+    {% if a.status | lower != 'ok' %}
+        {% if flagged.append(a) %}{% endif %}
+    {% endif %}
+{% endfor %}
+<section class="page asymmetry-page">
+    <div class="page-header">
+        <div class="header-bar">
+            <h2>ASYMMETRY SUMMARY</h2>
+        </div>
+    </div>
+
+    <div class="asymmetry-content">
+        <p class="asym-intro">
+            Bilateral asymmetries flagged for attention. Values represent left-right differences
+            as a percentage. Positive = left dominant, negative = right dominant.
+            Measures within normal range (&lt;{{ asym_ok }}%) are not shown.
+        </p>
+
+        <div class="asym-legend">
+            <span class="asym-legend-item">
+                <span class="legend-dot legend-monitor"></span> MONITOR ({{ asym_ok }}&ndash;{{ asym_concern }}%)
+            </span>
+            <span class="asym-legend-item">
+                <span class="legend-dot legend-address"></span> ADDRESS (&gt;{{ asym_concern }}%)
+            </span>
+        </div>
+
+        {% if flagged %}
+        <table class="asymmetry-table avoid-break">
+            <thead>
+                <tr>
+                    <th>Test</th>
+                    <th>Metric</th>
+                    <th>Asymmetry</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for a in flagged %}
+                <tr>
+                    <td>{{ a.test }}</td>
+                    <td>{{ a.metric }}</td>
+                    <td class="asym-value">{{ a.percent }} {{ a.side }}</td>
+                    <td>
+                        <span class="status-badge status-{{ a.status | lower }}">{{ a.status }}</span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="asym-all-clear">All asymmetry measures are within normal range.</p>
+        {% endif %}
+
+        {# AI Interpretation of asymmetry data #}
+        {% if asym_ai_interpretation %}
+        <div class="asym-interpretation avoid-break">
+            <h3 class="section-label">INTERPRETATION</h3>
+            <p class="interpretation-text">{{ asym_ai_interpretation }}</p>
+        </div>
+        {% endif %}
+    </div>
+
+    {% include 'partials/page_footer.html' %}
+</section>
+{% endif %}
+
+{# ================================================================ #}
+{# GLOSSARY & DEFINITIONS PAGE                                       #}
+{# ================================================================ #}
+<section class="page glossary-page">
+    <div class="page-header">
+        <div class="header-bar">
+            <h2>GLOSSARY &amp; DEFINITIONS</h2>
+        </div>
+    </div>
+
+    <div class="glossary-content">
+        <div class="glossary-section avoid-break">
+            <h3 class="glossary-section-title">ABBREVIATIONS</h3>
+            <table class="glossary-table abbrev-table">
+                <tbody>
+                    <tr><td class="abbrev-term">CMJ</td><td>Countermovement Jump &mdash; a jump where you dip down first, then explode up</td></tr>
+                    <tr><td class="abbrev-term">SJ</td><td>Squat Jump &mdash; a jump from a still, held squat position (no dip)</td></tr>
+                    <tr><td class="abbrev-term">IMTP</td><td>Isometric Mid-Thigh Pull &mdash; a max-effort pull against an immovable bar</td></tr>
+                    <tr><td class="abbrev-term">RSI</td><td>Reactive Strength Index &mdash; how well you jump relative to time on the ground</td></tr>
+                    <tr><td class="abbrev-term">mRSI</td><td>Modified RSI (also RSImod) &mdash; similar to RSI but uses total movement time instead of contact time</td></tr>
+                    <tr><td class="abbrev-term">EUR</td><td>Elastic Utilization Ratio &mdash; compares CMJ to SJ to see how well you use the &ldquo;dip&rdquo;</td></tr>
+                    <tr><td class="abbrev-term">DSI</td><td>Dynamic Strength Index &mdash; compares jumping force to max pulling force</td></tr>
+                    <tr><td class="abbrev-term">BW</td><td>Body Weight</td></tr>
+                    <tr><td class="abbrev-term">RFD</td><td>Rate of Force Development &mdash; how fast you can ramp up force</td></tr>
+                    <tr><td class="abbrev-term">&times;BW</td><td>Times body weight &mdash; force expressed as a multiple of your own weight</td></tr>
+                    <tr><td class="abbrev-term">N</td><td>Newtons &mdash; the standard unit for measuring force</td></tr>
+                    <tr><td class="abbrev-term">W/kg</td><td>Watts per kilogram &mdash; power output adjusted for body size</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="glossary-section avoid-break">
+            <h3 class="glossary-section-title">METRIC DEFINITIONS</h3>
+            <table class="glossary-table definition-table">
+                <thead>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Definition</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="def-term">Jump Height</td>
+                        <td>How high you jumped. A direct measure of lower-body power &mdash; higher is better.</td>
+                    </tr>
+                    <tr>
+                        <td class="def-term">RSImod</td>
+                        <td>How high you jumped relative to how long the entire movement took. A higher number means you&rsquo;re more explosive &mdash; getting more height in less time.</td>
+                    </tr>
+                    <tr>
+                        <td class="def-term">RSI</td>
+                        <td>How high you jumped relative to how long your feet were on the ground. Important for quick, bouncy movements like sprinting and cutting.</td>
+                    </tr>
+                    <tr>
+                        <td class="def-term">Peak Force</td>
+                        <td>The maximum force you pushed into the ground during the movement. Can be shown in Newtons (N) or as a multiple of your body weight (&times;BW).</td>
+                    </tr>
+                    <tr>
+                        <td class="def-term">Peak Propulsive Force</td>
+                        <td>The maximum force during the push-off (upward) portion of a jump. Shows how hard you can drive into the ground when it matters most.</td>
+                    </tr>
+                    <tr>
+                        <td class="def-term">Propulsive Impulse</td>
+                        <td>The total &ldquo;push&rdquo; you put into the ground during takeoff. This is the single biggest factor in how high you jump &mdash; more push equals more height.</td>
+                    </tr>
+                    <tr>
+                        <td class="def-term">Contact Time</td>
+                        <td>How long your feet are on the ground during a bounce or rebound. Shorter ground time at the same jump height means you&rsquo;re more spring-like.</td>
+                    </tr>
+                    <tr>
+                        <td class="def-term">Contraction Time</td>
+                        <td>How long the entire dip-and-jump movement takes from start to takeoff. Getting the same height in less time means you&rsquo;re getting more explosive.</td>
+                    </tr>
+                    <tr>
+                        <td class="def-term">Rate of Force Development</td>
+                        <td>How fast you can ramp up force. Think of it as your &ldquo;quickness off the line&rdquo; &mdash; important for any movement where you need to be fast.</td>
+                    </tr>
+                    <tr>
+                        <td class="def-term">Time to Stabilization</td>
+                        <td>How quickly you &ldquo;stick&rdquo; a landing and become still. Faster times mean better body control and balance after impact.</td>
+                    </tr>
+                    <tr>
+                        <td class="def-term">EUR</td>
+                        <td>Compares your CMJ to your SJ. A value above 1.0 means the dip before the jump is helping you &mdash; you&rsquo;re using stored energy effectively. Typical range: 1.00&ndash;1.10.</td>
+                    </tr>
+                    <tr>
+                        <td class="def-term">DSI</td>
+                        <td>Compares your jumping force to your max pulling strength. Helps guide training: a low number means focus on speed and power; a high number means build more raw strength. Typical range: 0.60&ndash;0.80.</td>
+                    </tr>
+                    <tr>
+                        <td class="def-term">Asymmetry</td>
+                        <td>The percentage difference between your left and right sides. A positive number means the left side is stronger; negative means the right. Smaller numbers are better.</td>
+                    </tr>
+                    <tr>
+                        <td class="def-term">Peak Landing Force</td>
+                        <td>The highest force during a landing, shown as a multiple of body weight (&times;BW). Lower numbers mean you&rsquo;re absorbing the impact more smoothly.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% include 'partials/page_footer.html' %}
+</section>
+
+</body>
+</html>

@@ -1,186 +1,247 @@
-# Force Plate Report Generator
+# Automated Force Plate Assessment Report Generator
 
-Automated report generation system for Hawkin Dynamics force plate assessments. Transforms raw API data into professionally formatted PDF reports for individual athletes and teams.
+> A premium HTML/PDF reporting system for Hawkin Dynamics force plate data
 
-Built for [Move, Measure, Analyze LLC](https://movemeasure.com) — a mobile sports science service providing force plate assessments for athletes and teams.
+![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python&logoColor=white)
+![Flask](https://img.shields.io/badge/Flask-3.x-lightgrey?logo=flask)
+![Playwright](https://img.shields.io/badge/Playwright-Chromium-green?logo=playwright)
+![License](https://img.shields.io/badge/License-MIT-yellow)
 
 ---
 
 ## Overview
 
-This system pulls athlete data directly from the Hawkin Dynamics API, processes force-time metrics, applies a custom biomechanical framework, and generates client-ready PDF reports in under 60 seconds.
+Sport scientists and strength coaches spend hours manually compiling force plate data into presentable reports. This system automates the entire pipeline — from pulling raw data via the Hawkin Dynamics API to generating premium, branded, multi-page HTML and PDF assessment reports.
 
-### Two Report Types
-
-| Individual Reports | Team Reports |
-|-------------------|--------------|
-| 4+ assessments per athlete | Up to 26+ athletes per session |
-| Force-time curve visualizations | Team performance dashboard |
-| Asymmetry analysis across all tests | Quadrant-based athlete profiling |
-| Benchmark comparisons | Injury risk flagging |
-| Personalized recommendations | Leaderboards & full roster |
+The result: comprehensive athlete reports generated in under 30 seconds, complete with force-time visualizations, asymmetry analysis, multi-session trend tracking, derived performance metrics, and optional AI-powered interpretations.
 
 ---
 
-## Sample Reports
+## Key Features
 
-### Individual Athlete Report
-
-**Performance Dashboard** — Key metrics at a glance with multiple assessment types:
-
-![Individual Dashboard](Samples/individual_dashboard.png)
-
-**Force-Time Curves** — Bilateral force traces with real-time asymmetry tracking:
-
-![CMJ Assessment](Samples/individual_cmj.png)
-
-**Asymmetry Summary** — Cross-test comparison with status flags:
-
-![Asymmetry Summary](Samples/individual_asymmetry.png)
+- **Interactive Web Configuration** — Flask app for athlete search, test/trial selection, session pairing, custom summaries, and AI toggle
+- **Premium Report Design** — Branded HTML reports with Bebas Neue / Source Sans 3 typography and a gold/black/white aesthetic
+- **Performance Dashboard** — Snapshot tiles with key metrics, delta indicators, and gauge visualizations for derived metrics (EUR, DSI)
+- **Force-Time Visualizations** — Matplotlib-generated force-time curves with left/right asymmetry shading embedded as base64 PNGs
+- **Multi-Session Trends** — Session-over-session tracking with trend charts and data tables showing performance changes
+- **Asymmetry Analysis** — Comprehensive left/right asymmetry assessment with configurable OK / Monitor / Address thresholds
+- **PDF Export** — Playwright-powered headless Chromium rendering to print-ready Letter-format PDFs with controlled page breaks
+- **AI Interpretations** — Optional Claude-powered narrative summaries for dashboard overview and asymmetry analysis
+- **Derived Metrics** — EUR (Elastic Utilization Ratio) and DSI (Dynamic Strength Index) with visual gauge bars showing performance zones
+- **Multiple Input Modes** — Live API, CLI interactive, CLI direct, offline JSON, and web app interfaces
 
 ---
 
-### Team Report
-
-**Team Performance Dashboard** — Baseline metrics with descriptive statistics:
-
-![Team Dashboard](Samples/team_dashboard.png)
-
-**Performance Profiles** — Quadrant scatter plots categorizing athletes by explosiveness and force application strategy:
-
-![Performance Profiles](Samples/team_profiles.png)
-
-**Injury Risk Assessment** — Landing force and asymmetry flags with actionable status levels:
-
-![Injury Risk](Samples/team_injury_risk.png)
-
-**Training Focus Matrix** — Profile-based training recommendations:
-
-![Training Focus](Samples/team_training_focus.png)
-
----
-
-## Technical Implementation
-
-### Architecture
+## Architecture
 
 ```
 Hawkin Dynamics API
         │
-        ▼
-┌───────────────────┐
-│   Data Ingestion  │  ← API authentication, pagination, date filtering
-│   & Processing    │  ← Test type detection, metric extraction
-└───────────────────┘
+  hdforce package
         │
-        ▼
-┌───────────────────┐
-│  Analysis Layer   │  ← OUTPUT/STRATEGY/DRIVER framework
-│                   │  ← Quadrant classification, asymmetry flags
-└───────────────────┘
+  Engine (computation, metrics, plots)
         │
-        ▼
-┌───────────────────┐
-│  PDF Generation   │  ← ReportLab rendering, matplotlib visualizations
-│                   │  ← Custom branding, professional formatting
-└───────────────────┘
+  payload.py (structured dict)
         │
-        ▼
-   Client-Ready PDF
+  Jinja2 + CSS (HTML rendering)
+        │
+   ┌────┴────┐
+   │         │
+ HTML      PDF
+(browser) (Playwright)
 ```
 
-### Key Features
+### Module Breakdown
 
-**Data Pipeline**
-- Direct Hawkin Dynamics API integration with token authentication
-- Auto-detection of available test types (CMJ, Squat Jump, Multi Rebound, Drop Landing, etc.)
-- Best-trial selection logic per assessment type
-- Handles pagination and rate limiting
-
-**Analysis**
-- Custom **OUTPUT / STRATEGY / DRIVER** metric framework
-- Quadrant-based athlete profiling (Explosive, Powerful, Fast/Reactive, Building)
-- Asymmetry detection with tiered status levels (OK < 10%, MONITOR 10-15%, ADDRESS > 15%)
-- Landing force risk thresholds (> 4.0× body weight flagged)
-- Sport-specific normative data (Track & Field built out, extensible architecture)
-
-**Report Generation**
-- Professional PDF output with ReportLab
-- Force-time curve visualization with matplotlib
-- Left/right force traces with shaded asymmetry regions
-- Benchmark visualizations with color-coded ranges
-- Custom font handling and branded templates
-
-### Tech Stack
-
-- **Python 3.x**
-- **hdforce** — Hawkin Dynamics API wrapper
-- **pandas / numpy** — Data processing
-- **matplotlib** — Force-time visualizations
-- **ReportLab** — PDF generation
-- **PyPDF2 / pypdf** — PDF manipulation (landscape page insertion)
+| Module | Purpose |
+|--------|---------|
+| `Individual_Report_Generator_v4.py` | Core computation engine — force analysis, asymmetry, trends, metric calculations |
+| `html_reporting/payload.py` | Wraps engine output into structured dict; renders Matplotlib plots as base64 PNGs |
+| `html_reporting/render_html.py` | Jinja2 templating — converts payload dict into self-contained HTML with inline CSS |
+| `html_reporting/export_pdf.py` | Playwright (Chromium) — renders HTML to print-ready multi-page PDF |
+| `html_reporting/cli.py` | CLI orchestration — argument parsing, athlete/test selection, pipeline execution |
+| `html_reporting/webapp/app.py` | Flask web application — interactive UI for configuration and report preview |
+| `html_reporting/webapp/hawkin_service.py` | API service layer — wraps engine for Flask routes, handles authentication |
 
 ---
 
-## Metric Framework
+## Tech Stack
 
-Reports organize metrics into three categories:
-
-### OUTPUT — What You Produced
-- Jump Height (cm)
-- Jump Momentum (kg·m/s)
-- Peak Relative Power (W/kg)
-
-### STRATEGY — How You Jumped
-- RSImod (explosive efficiency)
-- Time to Takeoff (s)
-- Countermovement Depth (cm)
-
-### DRIVERS — How Much Force You Used
-- Relative Propulsive Impulse (N·s/kg)
-- Relative Braking RFD (N/s/kg)
-
-This framework helps athletes and coaches understand not just *what* happened, but *how* and *why*.
+| Layer | Technology |
+|-------|-----------|
+| Data Source | Hawkin Dynamics REST API (`hdforce` package) |
+| Computation | Python 3.11, NumPy, Pandas |
+| Visualization | Matplotlib (force-time plots, trend charts) |
+| Web App | Flask (routes, API endpoints, interactive UI) |
+| Templating | Jinja2 (HTML report generation) |
+| PDF Export | Playwright (Chromium sync API, Letter format) |
+| AI | Anthropic Claude API (optional interpretations) |
+| Styling | Custom CSS (screen + print), Google Fonts (Bebas Neue, Source Sans 3) |
+| Brand Colors | Black (`#0a0a0a`), Gold (`#f4bd2a`), White (`#ffffff`) |
 
 ---
 
-## Supported Assessments
+## Screenshots
 
-| Test Type | Individual | Team |
-|-----------|:----------:|:----:|
-| Countermovement Jump (CMJ) | ✓ | ✓ |
-| Squat Jump | ✓ | ✓ |
-| Multi Rebound | ✓ | ✓ |
-| CMJ Rebound | ✓ | ✓ |
-| Drop Landing | ✓ | ✓ |
-| Bodyweight Squats | ✓ | — |
-| Static Balance | ✓ | — |
+> *Screenshots coming soon — will include web app configuration, dashboard page, test assessment, trend analysis, asymmetry summary, and PDF output.*
 
 ---
 
-## Code Statistics
+## Installation & Setup
 
-| Component | Lines of Code |
-|-----------|---------------|
-| Team Report Generator | ~1,700 |
-| Individual Report Generator | ~1,200 |
-| **Total** | **~2,900** |
+```bash
+git clone https://github.com/ferdinanddelgadophd-move/force-plate-report-generator.git
+cd force-plate-report-generator
+pip install -r requirements.txt
+playwright install chromium
+```
+
+### Environment Variables
+
+Set these before running:
+
+```bash
+export HAWKIN_API_TOKEN="your-hawkin-api-token"
+export ANTHROPIC_API_KEY="your-anthropic-key"   # optional, for AI interpretations
+```
 
 ---
 
-## Output Examples
+## Usage
 
-Full sample reports are available in the `/samples` directory:
+### 1. Web App (Recommended)
 
-- `Sample_Individual_Report.pdf` — 7-page individual athlete assessment
-- `Sample_Team_Report.pdf` — 10-page team performance report
+```bash
+python -m html_reporting.webapp
+```
+
+Open `http://localhost:5000` in your browser. Search for an athlete, configure test selection, toggle AI, and generate reports interactively.
+
+### 2. CLI Interactive
+
+```bash
+python -m html_reporting.cli
+```
+
+Walks you through athlete selection, test picking, and report generation step by step.
+
+### 3. CLI Direct
+
+```bash
+python -m html_reporting.cli \
+    --athlete-id <ATHLETE_ID> \
+    --out ./output \
+    --format both \
+    --enable-ai
+```
+
+### 4. Offline (JSON Payload)
+
+```bash
+python -m html_reporting.cli \
+    --input-json sample_data.json \
+    --out ./output \
+    --format both
+```
+
+### CLI Options
+
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--athlete-id` | Hawkin athlete ID | Interactive selection |
+| `--out` | Output directory | `./output` |
+| `--format` | `html`, `pdf`, or `both` | `both` |
+| `--enable-ai` | Enable Claude AI interpretations | Off |
+| `--days-back` | Lookback window for historical data | `60` |
+| `--team` | Team name for branding | — |
+| `--sport` | Sport label | — |
+| `--input-json` | Path to offline JSON payload | — |
 
 ---
 
-## About
+## Report Structure
 
-Developed by **Ferdinand Delgado, PhD** for Move, Measure, Analyze LLC.
+| Page | Content |
+|------|---------|
+| **Cover** | Athlete name, team, sport, date, Move Measure Analyze branding |
+| **Dashboard** | Performance snapshot tiles with key metrics, delta indicators, gauge visualizations (EUR, DSI), and optional AI narrative summary |
+| **Test Pages** | Force-time plot, key metrics table, asymmetry indicators (one page per test type) |
+| **Trend Pages** | Multi-session trend charts with data tables showing session-over-session changes |
+| **Asymmetry Summary** | Comprehensive left/right asymmetry table with OK / Monitor / Address status indicators |
 
-- [Portfolio](https://ferdinanddelgadophd-move.github.io)
-- [LinkedIn](https://linkedin.com/in/ferdinanddelgado)
-- [Move, Measure, Analyze](https://movemeasure.com)
+---
+
+## Configuration Options
+
+- **Test Selection** — Choose which test types to include (CMJ, SJ, IMTP, DJ, etc.)
+- **Trial Selection** — Best trial from latest session auto-selected
+- **Session Pairing** — Select which sessions to compare for derived metrics (EUR, DSI)
+- **Custom Summaries** — Add free-text notes to the report
+- **AI Toggle** — Enable/disable Claude-powered interpretations
+- **Output Format** — HTML only, PDF only, or both
+- **Team/Sport Branding** — Customize report header with team and sport labels
+
+---
+
+## PDF Quality Controls
+
+- Playwright `page.pdf()` with Letter format (8.5" x 11")
+- `print.css` enforces page breaks between sections
+- `break-inside: avoid` prevents split charts, cards, and tables
+- CSS counters for automatic page numbering
+- `print-color-adjust: exact` preserves background colors and gradients
+
+---
+
+## Project Structure
+
+```
+force-plate-report-generator/
+├── README.md
+├── requirements.txt
+├── .gitignore
+├── Individual_Report_Generator_v4.py
+├── html_reporting/
+│   ├── __init__.py
+│   ├── __main__.py
+│   ├── cli.py
+│   ├── payload.py
+│   ├── render_html.py
+│   ├── export_pdf.py
+│   ├── smoke_test.py
+│   ├── templates/
+│   │   ├── report.html
+│   │   └── partials/
+│   │       └── page_footer.html
+│   ├── styles/
+│   │   ├── screen.css
+│   │   └── print.css
+│   └── webapp/
+│       ├── __init__.py
+│       ├── __main__.py
+│       ├── app.py
+│       ├── hawkin_service.py
+│       ├── templates/
+│       │   ├── layout.html
+│       │   ├── index.html
+│       │   ├── configure.html
+│       │   └── preview.html
+│       └── static/
+│           ├── app.js
+│           └── style.css
+└── docs/
+    └── screenshots/
+```
+
+---
+
+## License
+
+MIT License — see [LICENSE](LICENSE) for details.
+
+---
+
+## Author
+
+**Ferdinand Delgado, PhD**
+[Portfolio](https://ferdinanddelgadophd-move.github.io/) · [GitHub](https://github.com/ferdinanddelgadophd-move)

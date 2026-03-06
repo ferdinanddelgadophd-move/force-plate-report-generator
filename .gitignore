@@ -1,0 +1,13 @@
+output/
+__pycache__/
+*.pyc
+.env
+*.pdf
+html_reporting/assets/cli_output/
+html_reporting/assets/smoke_test_output/
+mock_payload.json
+Team_Report_Generator_v8.py
+Launch Report Generator.bat
+movemeasure.html
+nul
+PORTFOLIO_INTEGRATION_INSTRUCTIONS.md

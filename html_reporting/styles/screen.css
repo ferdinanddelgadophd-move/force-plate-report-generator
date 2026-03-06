@@ -1,0 +1,942 @@
+/* ============================================================
+   screen.css — Move, Measure, Analyze Report
+   Premium performance lab aesthetic
+   ============================================================ */
+
+/* --- CSS Variables ------------------------------------------ */
+:root {
+    --black: #0a0a0a;
+    --white: #ffffff;
+    --off-white: #f8f8f8;
+    --gold: #f4bd2a;
+    --gold-dark: #d4a520;
+    --gold-light: rgba(244, 189, 42, 0.12);
+    --gray-lighter: #e0e0e0;
+    --gray-light: #666666;
+    --gray-text: #555555;
+    --gray-bg: #f2f2f2;
+    --green: #28a745;
+    --red: #dc3545;
+    --amber: #f0ad4e;
+    --font-heading: 'Bebas Neue', Impact, sans-serif;
+    --font-body: 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* --- Reset -------------------------------------------------- */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    font-family: var(--font-body);
+    color: var(--black);
+    background: var(--off-white);
+    line-height: 1.6;
+}
+
+h1, h2, h3, h4 {
+    font-family: var(--font-heading);
+    font-weight: 400;
+    letter-spacing: 0.03em;
+    line-height: 1.1;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* --- Page container ----------------------------------------- */
+.page {
+    background: var(--white);
+    max-width: 900px;
+    margin: 0 auto 2rem;
+    padding: 2.5rem;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.06);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 600px;
+}
+
+/* --- Dashboard Header (brand inline with title) ------------ */
+.dashboard-header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-brand-inline {
+    font-family: var(--font-heading);
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    color: var(--black);
+    white-space: nowrap;
+}
+
+.brand-sep {
+    margin: 0 0.05em;
+}
+
+/* --- Athlete Info Strip (compact dark bar) ------------------ */
+.athlete-strip {
+    background: var(--black);
+    color: var(--white);
+    padding: 0.6rem 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.athlete-strip-identity {
+    min-width: 180px;
+}
+
+.strip-athlete-name {
+    font-family: var(--font-heading);
+    font-size: 1.3rem;
+    color: var(--gold);
+    letter-spacing: 0.03em;
+    line-height: 1.1;
+}
+
+.strip-athlete-meta {
+    font-size: 0.75rem;
+    color: var(--gray-lighter);
+    font-weight: 300;
+}
+
+.athlete-strip-details {
+    display: flex;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+}
+
+.strip-detail {
+    text-align: center;
+}
+
+.strip-detail-label {
+    display: block;
+    font-size: 0.5rem;
+    letter-spacing: 0.12em;
+    color: var(--gray-light);
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 0.1rem;
+}
+
+.strip-detail-value {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--white);
+    font-weight: 500;
+}
+
+/* --- Page Header Bar ---------------------------------------- */
+.page-header {
+    margin-bottom: 1.5rem;
+}
+
+.header-bar {
+    background: var(--gold);
+    padding: 0.6rem 1.25rem;
+}
+
+.header-bar h2 {
+    font-size: 1.4rem;
+    color: var(--black);
+    letter-spacing: 0.04em;
+}
+
+/* --- Dashboard Page ----------------------------------------- */
+.dashboard-content {
+    padding: 0.5rem 0;
+    flex: 1;
+}
+
+/* Snapshot tiles */
+.snapshot-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.snapshot-tile {
+    background: var(--gray-bg);
+    border: 1px solid var(--gray-lighter);
+    text-align: center;
+    overflow: hidden;
+}
+
+.tile-header {
+    background: var(--gold);
+    padding: 0.35rem 0.75rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--black);
+    text-transform: uppercase;
+}
+
+.tile-value {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    padding: 0.75rem 0.5rem 0.25rem;
+    color: var(--black);
+}
+
+.tile-unit {
+    font-size: 0.75rem;
+    color: var(--gray-text);
+    padding-bottom: 0.15rem;
+}
+
+/* Delta arrows on tiles */
+.tile-delta {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding-bottom: 0.6rem;
+    letter-spacing: 0.02em;
+}
+
+.delta-arrow {
+    font-size: 0.85rem;
+    margin-right: 0.1em;
+}
+
+.delta-up {
+    color: var(--green);
+}
+
+.delta-down {
+    color: var(--red);
+}
+
+.delta-neutral {
+    color: var(--gold-dark);
+}
+
+/* EUR status colors */
+.tile-good .tile-header { background: var(--green); color: var(--white); }
+.tile-ok .tile-header { background: var(--gold); }
+.tile-low .tile-header { background: var(--red); color: var(--white); }
+
+/* Gauge bar inside tiles (EUR, DSI) */
+.tile-gauge {
+    padding: 0.4rem 0.75rem 0.6rem;
+}
+
+.gauge-track {
+    position: relative;
+    height: 6px;
+    border-radius: 3px;
+    display: flex;
+    overflow: visible;
+}
+
+.gauge-zone {
+    height: 100%;
+}
+
+.gauge-zone:first-child {
+    border-radius: 3px 0 0 3px;
+}
+
+.gauge-zone:last-child {
+    border-radius: 0 3px 3px 0;
+}
+
+.gauge-red { background: rgba(220, 53, 69, 0.5); }
+.gauge-amber { background: rgba(240, 173, 78, 0.55); }
+.gauge-green { background: rgba(40, 167, 69, 0.5); }
+
+.gauge-marker {
+    position: absolute;
+    top: -4px;
+    width: 4px;
+    height: 14px;
+    background: var(--black);
+    border-radius: 2px;
+    transform: translateX(-50%);
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.8);
+}
+
+.gauge-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.55rem;
+    color: var(--gray-light);
+    margin-top: 0.25rem;
+    padding: 0 0.1rem;
+}
+
+.tile-interpretation {
+    font-size: 0.65rem;
+    font-weight: 700;
+    margin-top: 0.3rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.interp-green { color: var(--green); }
+.interp-amber { color: #c08a00; }
+.interp-red { color: var(--red); }
+
+/* --- Cards -------------------------------------------------- */
+.card-header {
+    background: var(--gold);
+    padding: 0.4rem 1rem;
+    font-family: var(--font-heading);
+    font-size: 0.85rem;
+    letter-spacing: 0.06em;
+    color: var(--black);
+}
+
+.card-body {
+    padding: 1rem;
+    border: 1px solid var(--gray-lighter);
+    border-top: none;
+}
+
+/* Summary card */
+.summary-card {
+    margin-bottom: 1.5rem;
+}
+
+.summary-text {
+    font-size: 0.9rem;
+    color: var(--gray-text);
+    line-height: 1.7;
+}
+
+.summary-placeholder {
+    font-size: 0.9rem;
+    color: var(--gray-light);
+    font-style: italic;
+}
+
+.dashboard-glossary-note {
+    font-size: 0.7rem;
+    color: var(--gray-light);
+    margin-top: 1rem;
+    border-top: 1px solid var(--gray-lighter);
+    padding-top: 0.75rem;
+    font-style: italic;
+}
+
+/* --- Test Page ---------------------------------------------- */
+.test-content {
+    padding: 0.5rem 0;
+    flex: 1;
+}
+
+.chart-container {
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--gray-lighter);
+    padding: 0.5rem;
+    background: var(--white);
+}
+
+.force-time-chart,
+.trend-chart {
+    width: 100%;
+    height: auto;
+}
+
+.chart-placeholder {
+    background: var(--gray-bg);
+    padding: 3rem;
+    text-align: center;
+    color: var(--gray-light);
+    border: 1px dashed var(--gray-lighter);
+    margin-bottom: 1.5rem;
+}
+
+/* --- Trial Info Banner (on each test page) ----------------- */
+.trial-info-banner {
+    background: var(--gray-bg);
+    border: 1px solid var(--gray-lighter);
+    border-left: 3px solid var(--gold);
+    padding: 0.45rem 0.8rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.75rem;
+    color: var(--gray-text);
+}
+
+.trial-info-content {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+}
+
+.trial-info-label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--gray-light);
+}
+
+.trial-info-value {
+    font-weight: 600;
+    color: var(--black);
+    margin-right: 0.2rem;
+}
+
+.trial-info-sep {
+    color: var(--gray-lighter);
+    margin: 0 0.15rem;
+}
+
+.trial-info-reason {
+    color: var(--gold-dark);
+    font-weight: 600;
+    font-style: italic;
+}
+
+/* Test bottom: description + metrics side by side */
+.test-bottom-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.about-section,
+.metrics-section {
+    min-width: 0;
+}
+
+/* Section label (un-boxed heading) */
+.section-label {
+    font-family: var(--font-heading);
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+    color: var(--black);
+    padding-bottom: 0.35rem;
+    margin-bottom: 0.6rem;
+    border-bottom: 2px solid var(--gold);
+}
+
+/* Metric description (small hint under label) */
+.metric-label-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.metric-desc {
+    font-size: 0.6rem;
+    color: var(--gray-light);
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1.3;
+    margin-top: 0.1rem;
+}
+
+/* Asymmetry interpretation */
+.asym-interpretation {
+    margin-top: 1.25rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--gray-lighter);
+}
+
+.about-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--gold-dark);
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+    margin-top: 0.75rem;
+}
+
+.about-label:first-of-type {
+    margin-top: 0;
+}
+
+.about-text {
+    font-size: 0.85rem;
+    color: var(--gray-text);
+    line-height: 1.55;
+}
+
+.interpretation-text {
+    font-size: 0.85rem;
+    color: var(--gray-text);
+    line-height: 1.6;
+}
+
+.coach-notes {
+    margin-top: 1.25rem;
+    padding: 0.75rem 1rem;
+    background: var(--gold-light);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 4px 4px 0;
+}
+
+/* Metrics list */
+.metrics-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.metric-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--gray-bg);
+}
+
+.metric-row:last-child {
+    border-bottom: none;
+}
+
+.metric-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--black);
+}
+
+.metric-value-group {
+    text-align: right;
+}
+
+.metric-value {
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    color: var(--black);
+}
+
+.metric-unit {
+    font-size: 0.7rem;
+    color: var(--gray-light);
+    margin-left: 0.25rem;
+}
+
+.no-data {
+    font-size: 0.85rem;
+    color: var(--gray-light);
+    font-style: italic;
+}
+
+/* Metrics card trial count */
+.metrics-trial-count {
+    font-family: var(--font-body);
+    font-size: 0.65rem;
+    font-weight: 400;
+    color: var(--gray-light);
+    letter-spacing: 0;
+    margin-left: 0.5rem;
+}
+
+/* --- Individual Trial Table -------------------------------- */
+.trial-table-section {
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.individual-trial-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+    margin-top: 0;
+}
+
+.individual-trial-table th {
+    background: var(--black);
+    color: var(--gold);
+    padding: 0.45rem 0.75rem;
+    text-align: left;
+    font-family: var(--font-heading);
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    font-weight: 400;
+}
+
+.individual-trial-table td {
+    padding: 0.4rem 0.75rem;
+    border-bottom: 1px solid var(--gray-lighter);
+    color: var(--gray-text);
+}
+
+.individual-trial-table tbody tr:nth-child(even) {
+    background: var(--gray-bg);
+}
+
+.trial-best-row {
+    background: var(--gold-light) !important;
+    font-weight: 600;
+}
+
+.trial-best-row td {
+    color: var(--black);
+}
+
+.best-trial-star {
+    color: var(--gold-dark);
+    font-size: 0.9rem;
+    margin-left: 0.15rem;
+}
+
+.trial-metric-unit {
+    font-size: 0.65rem;
+    color: var(--gray-light);
+}
+
+.trial-table-legend {
+    font-size: 0.7rem;
+    color: var(--gray-light);
+    margin-top: 0.35rem;
+    padding-left: 0.75rem;
+}
+
+/* Asymmetry indicators */
+.asymmetry-indicators {
+    margin-top: 0.5rem;
+}
+
+.asym-mini-header {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--gray-light);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+.asym-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.asym-tag {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.75rem;
+    font-weight: 500;
+    border-left: 3px solid;
+}
+
+.asym-ok {
+    background: rgba(40, 167, 69, 0.08);
+    border-color: var(--green);
+    color: var(--green);
+}
+
+.asym-monitor {
+    background: var(--gold-light);
+    border-color: var(--gold-dark);
+    color: var(--gold-dark);
+}
+
+.asym-address {
+    background: rgba(220, 53, 69, 0.08);
+    border-color: var(--red);
+    color: var(--red);
+}
+
+/* --- Trend Page --------------------------------------------- */
+.trend-content {
+    padding: 0.5rem 0;
+    flex: 1;
+}
+
+.trend-table-wrap {
+    margin-top: 1.5rem;
+    overflow-x: auto;
+}
+
+.trend-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+}
+
+.trend-table th {
+    background: var(--black);
+    color: var(--gold);
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    font-family: var(--font-heading);
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    font-weight: 400;
+}
+
+.trend-table td {
+    padding: 0.45rem 0.75rem;
+    border-bottom: 1px solid var(--gray-lighter);
+    color: var(--gray-text);
+}
+
+.trend-table tbody tr:nth-child(even) {
+    background: var(--gray-bg);
+}
+
+/* --- Asymmetry Summary Page --------------------------------- */
+.asymmetry-content {
+    padding: 0.5rem 0;
+    flex: 1;
+}
+
+.asym-intro {
+    font-size: 0.85rem;
+    color: var(--gray-text);
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.asym-legend {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+}
+
+.asym-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    color: var(--gray-text);
+}
+
+.legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.legend-ok { background: var(--green); }
+.legend-monitor { background: var(--gold); }
+.legend-address { background: var(--red); }
+
+.asymmetry-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.asymmetry-table th {
+    background: var(--black);
+    color: var(--gold);
+    padding: 0.5rem 1rem;
+    text-align: left;
+    font-family: var(--font-heading);
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    font-weight: 400;
+}
+
+.asymmetry-table td {
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid var(--gray-lighter);
+    color: var(--gray-text);
+}
+
+.asymmetry-table tbody tr:nth-child(even) {
+    background: var(--gray-bg);
+}
+
+.asym-value {
+    font-weight: 600;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border-radius: 2px;
+}
+
+.status-ok {
+    background: var(--green);
+    color: var(--white);
+}
+
+.status-monitor {
+    background: var(--gold);
+    color: var(--black);
+}
+
+.status-address {
+    background: var(--red);
+    color: var(--white);
+}
+
+/* --- Page Footer -------------------------------------------- */
+.page-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    margin-top: auto;
+    border-top: 1px solid var(--gray-lighter);
+    font-size: 0.65rem;
+    color: var(--gray-light);
+}
+
+.footer-brand {
+    font-family: var(--font-heading);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    color: var(--gold-dark);
+}
+
+.footer-sep {
+    margin: 0 0.5rem;
+}
+
+.footer-center {
+    display: flex;
+    align-items: center;
+    gap: 0;
+}
+
+.footer-link {
+    color: var(--gold-dark);
+    text-decoration: none;
+    font-size: 0.6rem;
+    letter-spacing: 0.02em;
+}
+
+.footer-link:hover {
+    text-decoration: underline;
+}
+
+/* --- Asymmetry "All Clear" ----------------------------------- */
+.asym-all-clear {
+    text-align: center;
+    padding: 2rem 1rem;
+    font-size: 0.95rem;
+    color: var(--green);
+    font-weight: 600;
+}
+
+/* --- Glossary & Definitions Page ----------------------------- */
+.glossary-content {
+    padding: 0.5rem 0;
+    flex: 1;
+}
+
+.glossary-section {
+    margin-bottom: 1.5rem;
+}
+
+.glossary-section-title {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    letter-spacing: 0.06em;
+    color: var(--black);
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.35rem;
+    border-bottom: 2px solid var(--gold);
+}
+
+.glossary-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+}
+
+.glossary-table th {
+    background: var(--black);
+    color: var(--gold);
+    padding: 0.45rem 0.75rem;
+    text-align: left;
+    font-family: var(--font-heading);
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    font-weight: 400;
+}
+
+.glossary-table td {
+    padding: 0.4rem 0.75rem;
+    border-bottom: 1px solid var(--gray-lighter);
+    color: var(--gray-text);
+    line-height: 1.5;
+}
+
+.glossary-table tbody tr:nth-child(even) {
+    background: var(--gray-bg);
+}
+
+.abbrev-term,
+.def-term {
+    font-weight: 700;
+    color: var(--black);
+    white-space: nowrap;
+    width: 1%;
+}
+
+.abbrev-table td:first-child {
+    font-family: var(--font-heading);
+    font-size: 0.9rem;
+    letter-spacing: 0.05em;
+    padding-right: 1.5rem;
+}
+
+/* --- Responsive --------------------------------------------- */
+@media (max-width: 768px) {
+    .page {
+        margin: 0 auto 1rem;
+        padding: 1.25rem;
+    }
+
+    .athlete-strip {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .athlete-strip-details {
+        justify-content: center;
+    }
+
+    .dashboard-header-bar {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .snapshot-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .test-bottom-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .snapshot-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .athlete-strip-details {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .asym-tags {
+        flex-direction: column;
+    }
+}

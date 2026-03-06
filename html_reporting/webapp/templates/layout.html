@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Report Generator{% endblock %} | Move, Measure, Analyze</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="top-bar">
+        <a href="/" class="brand">
+            <span class="brand-move">MOVE</span><span class="brand-sep">,</span>
+            <span class="brand-measure">MEASURE</span><span class="brand-sep">,</span>
+            <span class="brand-analyze">ANALYZE</span>
+        </a>
+        <span class="nav-subtitle">Report Generator</span>
+    </nav>
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="app-footer">
+        <span>Move, Measure, Analyze LLC</span>
+        <span class="sep">&bull;</span>
+        <span>Data: Hawkin Dynamics</span>
+    </footer>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

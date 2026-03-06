@@ -1,0 +1,141 @@
+{% extends "layout.html" %}
+{% block title %}Report Preview{% endblock %}
+
+{% block content %}
+<div class="page-container preview-page">
+    <div class="step-header">
+        <div class="step-badge">3</div>
+        <h1>Report Preview</h1>
+    </div>
+
+    <div class="preview-actions">
+        <a href="/output/{{ filename }}.html" target="_blank" class="btn-action btn-html">
+            Open HTML Report
+        </a>
+        <a href="/download/{{ filename }}.pdf" class="btn-action btn-pdf" id="btn-download-pdf">
+            Download PDF
+        </a>
+        <button type="button" class="btn-action btn-edit" id="btn-toggle-summaries">
+            Add Summaries
+        </button>
+        <a href="/" class="btn-action btn-new">
+            Generate Another
+        </a>
+    </div>
+
+    <!-- Summary editing panel (hidden by default) -->
+    <div id="summary-panel" class="summary-panel" style="display:none">
+        <h2 class="section-title">Add Your Summaries</h2>
+        <p class="section-hint">Review the report below, then write your summaries here. Click "Regenerate with Summaries" to update the report.</p>
+
+        <div class="form-group">
+            <label for="sum-dashboard">Dashboard Summary</label>
+            <textarea id="sum-dashboard" rows="4" placeholder="Write your overall assessment summary..."></textarea>
+        </div>
+
+        <div id="sum-tests"></div>
+
+        <button type="button" id="btn-regen" class="btn-generate">
+            Regenerate with Summaries
+        </button>
+        <div id="regen-status" class="generate-status" style="display:none"></div>
+    </div>
+
+    <div class="preview-frame-wrap">
+        <iframe id="report-frame" src="/output/{{ filename }}.html" class="preview-frame"></iframe>
+    </div>
+</div>
+
+<script>
+const FILENAME = "{{ filename }}";
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Toggle summary panel
+    document.getElementById('btn-toggle-summaries').addEventListener('click', function() {
+        const panel = document.getElementById('summary-panel');
+        const isHidden = panel.style.display === 'none';
+        panel.style.display = isHidden ? 'block' : 'none';
+        this.textContent = isHidden ? 'Hide Summaries' : 'Add Summaries';
+
+        // Populate test summary fields from the report config (stored server-side)
+        if (isHidden) loadTestNames();
+    });
+
+    document.getElementById('btn-regen').addEventListener('click', regenerateWithSummaries);
+});
+
+function loadTestNames() {
+    // Fetch the config that was used to generate this report
+    fetch(`/api/report-config/${FILENAME}`)
+        .then(r => r.json())
+        .then(data => {
+            if (data.error) return;
+            const container = document.getElementById('sum-tests');
+            container.innerHTML = '';
+            (data.test_names || []).forEach((name, idx) => {
+                const div = document.createElement('div');
+                div.className = 'form-group';
+                div.innerHTML = `
+                    <label for="sum-test-${idx}">${name} Summary</label>
+                    <textarea id="sum-test-${idx}" rows="3" data-test-key="${data.test_keys[idx]}" placeholder="Write your interpretation for ${name} (optional)"></textarea>
+                `;
+                container.appendChild(div);
+            });
+        })
+        .catch(() => {});
+}
+
+function regenerateWithSummaries() {
+    const btn = document.getElementById('btn-regen');
+    const statusEl = document.getElementById('regen-status');
+    btn.disabled = true;
+    btn.textContent = 'Regenerating...';
+    statusEl.style.display = 'block';
+    statusEl.className = 'generate-status generating';
+    statusEl.textContent = 'Rebuilding report with your summaries...';
+
+    // Collect summaries
+    const user_summaries = {};
+    const dashSum = document.getElementById('sum-dashboard').value.trim();
+    if (dashSum) user_summaries['__dashboard__'] = dashSum;
+
+    document.querySelectorAll('#sum-tests textarea').forEach(ta => {
+        const key = ta.dataset.testKey;
+        const val = ta.value.trim();
+        if (key && val) user_summaries[key] = val;
+    });
+
+    fetch(`/api/regenerate/${FILENAME}`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({user_summaries: user_summaries}),
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.error) {
+            statusEl.className = 'generate-status error';
+            statusEl.textContent = 'Error: ' + data.error;
+            btn.disabled = false;
+            btn.textContent = 'Regenerate with Summaries';
+            return;
+        }
+        // Reload iframe and update links
+        const newFilename = data.filename;
+        document.getElementById('report-frame').src = '/output/' + newFilename + '.html';
+        document.querySelector('.btn-html').href = '/output/' + newFilename + '.html';
+        document.getElementById('btn-download-pdf').href = '/download/' + newFilename + '.pdf';
+        statusEl.className = 'generate-status';
+        statusEl.style.color = '#28a745';
+        statusEl.textContent = 'Report updated with your summaries!';
+        btn.disabled = false;
+        btn.textContent = 'Regenerate with Summaries';
+    })
+    .catch(err => {
+        statusEl.className = 'generate-status error';
+        statusEl.textContent = 'Failed: ' + err.message;
+        btn.disabled = false;
+        btn.textContent = 'Regenerate with Summaries';
+    });
+}
+</script>
+{% endblock %}

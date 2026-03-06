@@ -1,0 +1,586 @@
+/* ============================================================
+   print.css — Move, Measure, Analyze Report
+   Controlled multi-page PDF layout via Playwright
+   ============================================================ */
+
+@page {
+    size: Letter;
+    margin: 0.6in 0.5in 0.8in 0.5in;
+}
+
+/* --- Page break control ------------------------------------- */
+.page {
+    break-after: page;
+    page-break-after: always;
+    position: relative;
+    box-shadow: none;
+    margin: 0;
+    padding: 0;
+    max-width: none;
+    width: 100%;
+    min-height: 100%;
+    background: white;
+    display: flex;
+    flex-direction: column;
+}
+
+.page:last-child {
+    break-after: auto;
+    page-break-after: auto;
+}
+
+/* Prevent breaking inside content blocks */
+.avoid-break {
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+/* Apply avoid-break to key elements */
+.snapshot-tile,
+.summary-card,
+.about-section,
+.metrics-section,
+.chart-container,
+.trend-table-wrap,
+.asymmetry-indicators,
+.asymmetry-table,
+.trial-info-banner,
+.trial-table-section,
+.coach-notes,
+.asym-interpretation {
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+/* Trial info banner prints cleanly */
+.trial-info-banner {
+    border-left: 3px solid #f4bd2a !important;
+    background: #f5f5f5 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+/* Keep headers attached to their content */
+.page-header,
+.card-header {
+    break-after: avoid;
+    page-break-after: avoid;
+}
+
+.header-bar + * {
+    break-before: avoid;
+    page-break-before: avoid;
+}
+
+/* Keep metric grids from breaking mid-row */
+.snapshot-grid {
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+.metric-row {
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+.test-bottom-grid {
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+/* --- Print layout overrides --------------------------------- */
+body {
+    background: white;
+    font-size: 10pt;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    color-adjust: exact;
+}
+
+.page {
+    width: 7.5in;
+    padding: 0;
+}
+
+/* --- Dashboard header + athlete strip print ------------------ */
+.dashboard-header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-brand-inline {
+    font-size: 0.75rem;
+}
+
+.athlete-strip {
+    background: #0a0a0a !important;
+    color: white !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    margin: 0 0 0.75rem 0;
+    padding: 0.5rem 0.75rem;
+}
+
+.strip-athlete-name {
+    font-size: 1.1rem;
+    color: #f4bd2a !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+.strip-athlete-meta {
+    color: #e0e0e0 !important;
+    font-size: 0.65rem;
+}
+
+.strip-detail-label {
+    color: #666666 !important;
+    font-size: 0.45rem;
+}
+
+.strip-detail-value {
+    color: white !important;
+    font-size: 0.7rem;
+}
+
+/* --- Header bar print --------------------------------------- */
+.header-bar {
+    background: #f4bd2a !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+.header-bar h2 {
+    font-size: 1.1rem;
+}
+
+/* --- Dashboard print ---------------------------------------- */
+.snapshot-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+}
+
+.tile-header {
+    background: #f4bd2a !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    font-size: 0.6rem;
+    padding: 0.2rem 0.5rem;
+}
+
+.tile-good .tile-header {
+    background: #28a745 !important;
+}
+
+.tile-low .tile-header {
+    background: #dc3545 !important;
+}
+
+.tile-value {
+    font-size: 1.5rem;
+    padding: 0.4rem 0.25rem 0.15rem;
+}
+
+.tile-unit {
+    font-size: 0.65rem;
+    padding-bottom: 0.1rem;
+}
+
+/* Gauge bar in tiles */
+.tile-gauge {
+    padding: 0.2rem 0.5rem 0.4rem;
+}
+
+.gauge-track {
+    position: relative;
+    height: 4px;
+    border-radius: 2px;
+    display: flex;
+    overflow: visible;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+.gauge-red { background: rgba(220, 53, 69, 0.5) !important; }
+.gauge-amber { background: rgba(240, 173, 78, 0.55) !important; }
+.gauge-green { background: rgba(40, 167, 69, 0.5) !important; }
+
+.gauge-marker {
+    position: absolute;
+    top: -3px;
+    width: 3px;
+    height: 10px;
+    background: #000 !important;
+    border-radius: 1px;
+    transform: translateX(-50%);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+.gauge-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.45rem;
+    margin-top: 0.15rem;
+}
+
+.tile-interpretation {
+    font-size: 0.5rem;
+    font-weight: 700;
+    margin-top: 0.15rem;
+    text-transform: uppercase;
+}
+
+.interp-green { color: #28a745 !important; }
+.interp-amber { color: #c08a00 !important; }
+.interp-red { color: #dc3545 !important; }
+
+/* Delta arrow in tiles */
+.tile-delta {
+    font-size: 0.65rem;
+    padding-bottom: 0.35rem;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+.delta-up {
+    color: #28a745 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+.delta-down {
+    color: #dc3545 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+.delta-neutral {
+    color: #d4a520 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+.snapshot-tile {
+    background: #f2f2f2 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+/* --- Cards print -------------------------------------------- */
+.card-header {
+    background: #f4bd2a !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.75rem;
+}
+
+.card-body {
+    padding: 0.6rem 0.75rem;
+}
+
+/* --- Charts print ------------------------------------------- */
+.chart-container {
+    padding: 0.25rem;
+    margin-bottom: 0.75rem;
+}
+
+.force-time-chart,
+.trend-chart {
+    max-height: 3.5in;
+    width: auto;
+    margin: 0 auto;
+}
+
+/* --- Test layout print -------------------------------------- */
+.test-bottom-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+}
+
+.about-text,
+.interpretation-text {
+    font-size: 0.75rem;
+    line-height: 1.45;
+}
+
+.coach-notes {
+    margin-top: 0.5rem;
+    padding: 0.4rem 0.6rem;
+    border-left: 2px solid var(--gold);
+    background: var(--gold-light);
+}
+
+.about-label {
+    font-size: 0.6rem;
+    margin-top: 0.4rem;
+}
+
+.metric-row {
+    padding: 0.3rem 0;
+}
+
+.metric-label {
+    font-size: 0.7rem;
+}
+
+.metric-value {
+    font-size: 0.95rem;
+}
+
+.metric-unit {
+    font-size: 0.6rem;
+}
+
+/* Section label (un-boxed heading) */
+.section-label {
+    font-size: 0.65rem;
+    padding-bottom: 0.2rem;
+    margin-bottom: 0.4rem;
+    border-bottom: 2px solid #f4bd2a;
+}
+
+.metric-desc {
+    font-size: 0.5rem;
+}
+
+.asym-interpretation {
+    margin-top: 0.75rem;
+    padding-top: 0.5rem;
+}
+
+/* --- Asymmetry print ---------------------------------------- */
+.asym-tag {
+    font-size: 0.65rem;
+    padding: 0.2rem 0.5rem;
+}
+
+.asym-mini-header {
+    font-size: 0.55rem;
+}
+
+.asymmetry-table th {
+    background: #0a0a0a !important;
+    color: #f4bd2a !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    font-size: 0.75rem;
+    padding: 0.35rem 0.75rem;
+}
+
+.asymmetry-table td {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.75rem;
+}
+
+.asymmetry-table tbody tr:nth-child(even) {
+    background: #f2f2f2 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+.trend-table th {
+    background: #0a0a0a !important;
+    color: #f4bd2a !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+.trend-table tbody tr:nth-child(even) {
+    background: #f2f2f2 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+.status-badge {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+.status-ok {
+    background: #28a745 !important;
+    color: white !important;
+}
+
+.status-monitor {
+    background: #f4bd2a !important;
+    color: #0a0a0a !important;
+}
+
+.status-address {
+    background: #dc3545 !important;
+    color: white !important;
+}
+
+.asym-ok { border-color: #28a745 !important; }
+.asym-monitor { border-color: #d4a520 !important; }
+.asym-address { border-color: #dc3545 !important; }
+
+/* --- Footer print ------------------------------------------- */
+.page-footer {
+    font-size: 0.55rem;
+    padding-top: 0.5rem;
+    margin-top: auto;
+}
+
+.footer-brand {
+    font-size: 0.65rem;
+}
+
+.footer-center {
+    display: flex;
+    align-items: center;
+    gap: 0;
+}
+
+.footer-link {
+    color: #d4a520;
+    text-decoration: none;
+    font-size: 0.5rem;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+}
+
+.asym-all-clear {
+    text-align: center;
+    padding: 1.5rem 1rem;
+    color: #28a745;
+    font-weight: 600;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+}
+
+/* --- Page numbering via CSS counter ------------------------- */
+body {
+    counter-reset: page-counter;
+}
+
+.page {
+    counter-increment: page-counter;
+}
+
+.page-footer::after {
+    content: "Page " counter(page-counter);
+    font-size: 0.55rem;
+    color: #666666;
+    margin-left: 1rem;
+}
+
+/* --- Reduce whitespace for print density -------------------- */
+.summary-text {
+    font-size: 0.8rem;
+    line-height: 1.5;
+}
+
+.summary-card {
+    margin-bottom: 0.75rem;
+}
+
+.dashboard-glossary-note {
+    font-size: 0.6rem;
+    margin-top: 0.5rem;
+    padding-top: 0.4rem;
+}
+
+.asym-intro {
+    font-size: 0.75rem;
+}
+
+.asym-legend {
+    margin-bottom: 0.75rem;
+}
+
+.asym-legend-item {
+    font-size: 0.7rem;
+}
+
+.legend-dot {
+    width: 8px;
+    height: 8px;
+}
+
+/* --- Individual Trial Table print --------------------------- */
+.individual-trial-table th {
+    background: #0a0a0a !important;
+    color: #f4bd2a !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    font-size: 0.7rem;
+    padding: 0.3rem 0.5rem;
+}
+
+.individual-trial-table td {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.5rem;
+}
+
+.individual-trial-table tbody tr:nth-child(even) {
+    background: #f2f2f2 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+.trial-best-row {
+    background: rgba(244, 189, 42, 0.12) !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+.best-trial-star {
+    color: #d4a520 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+.trial-table-legend {
+    font-size: 0.6rem;
+}
+
+.metrics-trial-count {
+    font-size: 0.55rem;
+}
+
+/* --- Glossary print ---------------------------------------- */
+.glossary-section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+.glossary-section-title {
+    font-size: 0.8rem;
+    border-bottom-color: #f4bd2a;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.25rem;
+}
+
+.glossary-table th {
+    background: #0a0a0a !important;
+    color: #f4bd2a !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    font-size: 0.65rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.glossary-table td {
+    font-size: 0.65rem;
+    padding: 0.25rem 0.5rem;
+    line-height: 1.4;
+}
+
+.glossary-table tbody tr:nth-child(even) {
+    background: #f2f2f2 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+.abbrev-table td:first-child {
+    font-size: 0.75rem;
+}
+
+/* --- Hide elements not needed in print ---------------------- */
+.chart-placeholder {
+    display: none;
+}

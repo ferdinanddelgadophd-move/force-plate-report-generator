@@ -1,0 +1,689 @@
+/* ============================================================
+   style.css — Web App UI for Move, Measure, Analyze
+   Same brand: black / gold / white
+   ============================================================ */
+
+:root {
+    --black: #0a0a0a;
+    --white: #ffffff;
+    --off-white: #f8f8f8;
+    --gold: #f4bd2a;
+    --gold-dark: #d4a520;
+    --gold-light: rgba(244, 189, 42, 0.12);
+    --gray-lighter: #e0e0e0;
+    --gray-light: #666666;
+    --gray-text: #555555;
+    --gray-bg: #f2f2f2;
+    --green: #28a745;
+    --red: #dc3545;
+    --font-heading: 'Bebas Neue', Impact, sans-serif;
+    --font-body: 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+*, *::before, *::after {
+    margin: 0; padding: 0; box-sizing: border-box;
+}
+
+html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+body {
+    font-family: var(--font-body);
+    color: var(--black);
+    background: var(--off-white);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+h1, h2, h3 {
+    font-family: var(--font-heading);
+    font-weight: 400;
+    letter-spacing: 0.03em;
+}
+
+/* --- Top Bar ------------------------------------------------ */
+.top-bar {
+    background: var(--black);
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    gap: 1.5rem;
+}
+
+.brand {
+    text-decoration: none;
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    letter-spacing: 0.12em;
+}
+
+.brand-move, .brand-measure, .brand-analyze { color: var(--white); }
+.brand-sep { color: var(--gold); margin: 0 0.08em; }
+
+.nav-subtitle {
+    color: var(--gold);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+}
+
+/* --- Main Content ------------------------------------------- */
+.main-content {
+    flex: 1;
+    padding: 1.5rem;
+}
+
+.page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* --- Footer ------------------------------------------------- */
+.app-footer {
+    background: var(--black);
+    color: var(--gray-light);
+    text-align: center;
+    padding: 0.75rem;
+    font-size: 0.75rem;
+}
+
+.app-footer .sep { margin: 0 0.5rem; }
+
+/* --- Step Header -------------------------------------------- */
+.step-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.step-badge {
+    background: var(--gold);
+    color: var(--black);
+    font-family: var(--font-heading);
+    font-size: 1.3rem;
+    width: 2.2rem;
+    height: 2.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.step-header h1 {
+    font-size: 2rem;
+    line-height: 1;
+}
+
+.step-sub {
+    font-size: 1rem;
+    color: var(--gray-light);
+    margin-left: auto;
+    font-weight: 600;
+}
+
+/* --- Loading / Error ---------------------------------------- */
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 3rem;
+    color: var(--gray-light);
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--gray-lighter);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.error-state {
+    background: rgba(220, 53, 69, 0.08);
+    border: 1px solid var(--red);
+    color: var(--red);
+    padding: 1rem 1.5rem;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+/* --- Search Box --------------------------------------------- */
+.search-box {
+    margin-bottom: 1.5rem;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    font-family: var(--font-body);
+    border: 2px solid var(--gray-lighter);
+    background: var(--white);
+    transition: border-color 0.2s;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: var(--gold);
+}
+
+/* --- Athlete Grid ------------------------------------------- */
+.athlete-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 0.75rem;
+}
+
+.athlete-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    background: var(--white);
+    border: 1px solid var(--gray-lighter);
+    text-decoration: none;
+    color: var(--black);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.athlete-card:hover {
+    border-color: var(--gold);
+    box-shadow: 0 2px 8px rgba(244, 189, 42, 0.15);
+}
+
+.athlete-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.athlete-arrow {
+    color: var(--gold);
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: var(--gray-light);
+    padding: 2rem;
+}
+
+/* --- Config Layout ------------------------------------------ */
+.config-layout {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+.section-title {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.3rem;
+    border-bottom: 2px solid var(--gold);
+}
+
+.section-hint {
+    font-size: 0.8rem;
+    color: var(--gray-light);
+    margin-bottom: 1rem;
+}
+
+/* --- Test List ---------------------------------------------- */
+.test-block {
+    background: var(--white);
+    border: 1px solid var(--gray-lighter);
+    margin-bottom: 0.5rem;
+}
+
+.test-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 0.75rem;
+}
+
+.test-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    flex: 1;
+}
+
+.test-check input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--gold);
+}
+
+.test-label {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.test-meta {
+    font-size: 0.75rem;
+    color: var(--gray-light);
+    margin-left: 0.5rem;
+}
+
+.btn-expand {
+    background: none;
+    border: 1px solid var(--gray-lighter);
+    cursor: pointer;
+    padding: 0.2rem 0.5rem;
+    font-size: 0.7rem;
+    color: var(--gray-light);
+    transition: color 0.2s;
+}
+
+.btn-expand:hover { color: var(--gold-dark); }
+
+/* --- Best Metric Dropdown ----------------------------------- */
+.best-metric-select {
+    font-size: 0.72rem;
+    font-family: var(--font-body);
+    padding: 0.2rem 0.4rem;
+    border: 1px solid var(--gray-lighter);
+    background: var(--white);
+    color: var(--gray-text);
+    margin-left: auto;
+    margin-right: 0.5rem;
+    cursor: pointer;
+    border-radius: 2px;
+}
+
+.best-metric-select:focus {
+    outline: none;
+    border-color: var(--gold);
+}
+
+/* --- Sessions Panel ----------------------------------------- */
+.sessions-panel {
+    border-top: 1px solid var(--gray-lighter);
+    padding: 0.5rem 0.75rem;
+    background: var(--gray-bg);
+}
+
+.session-block {
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--gray-lighter);
+}
+
+.session-block:last-child {
+    margin-bottom: 0;
+    border-bottom: none;
+}
+
+.session-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.85rem;
+    margin-bottom: 0.25rem;
+}
+
+.session-meta {
+    font-size: 0.75rem;
+    color: var(--gray-light);
+}
+
+.session-avg {
+    font-size: 0.75rem;
+    color: var(--gold-dark);
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+}
+
+.trial-list {
+    margin-left: 0.5rem;
+}
+
+.trial-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    padding: 0.25rem 0.3rem;
+    color: var(--gray-text);
+    transition: background 0.15s;
+}
+
+.trial-row:hover {
+    background: rgba(244, 189, 42, 0.06);
+}
+
+.trial-row-best {
+    background: var(--gold-light);
+    border-radius: 2px;
+    margin: 0.1rem 0;
+}
+
+.trial-select-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    width: 100%;
+}
+
+.trial-radio {
+    accent-color: var(--gold);
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+}
+
+.trial-time {
+    min-width: 120px;
+    font-size: 0.75rem;
+    color: var(--gray-light);
+}
+
+.trial-metrics {
+    font-weight: 500;
+}
+
+.best-badge {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: var(--gold);
+    color: var(--black);
+    padding: 0.1rem 0.4rem;
+    margin-left: auto;
+    border-radius: 1px;
+    white-space: nowrap;
+}
+
+.best-reason-hint {
+    font-size: 0.72rem;
+    color: var(--gold-dark);
+    font-weight: 600;
+    padding: 0.3rem 0 0.4rem 0;
+    border-bottom: 1px solid var(--gray-lighter);
+    margin-bottom: 0.5rem;
+}
+
+/* --- Form Groups -------------------------------------------- */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--gray-text);
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group textarea {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+    font-family: var(--font-body);
+    border: 1px solid var(--gray-lighter);
+    background: var(--white);
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+.radio-group {
+    display: flex;
+    gap: 1.25rem;
+}
+
+.radio-group label {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.85rem;
+    text-transform: none;
+    letter-spacing: 0;
+    cursor: pointer;
+}
+
+.radio-group input[type="radio"] {
+    accent-color: var(--gold);
+}
+
+.checkbox-label {
+    display: flex !important;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    font-size: 0.9rem !important;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--gold);
+}
+
+.btn-small {
+    background: var(--gold);
+    color: var(--black);
+    border: none;
+    padding: 0.35rem 0.75rem;
+    font-family: var(--font-heading);
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    margin-left: 0.5rem;
+    transition: background 0.2s;
+}
+
+.btn-small:hover { background: var(--gold-dark); }
+
+/* --- Generate Button ---------------------------------------- */
+.btn-generate {
+    width: 100%;
+    padding: 0.85rem;
+    background: var(--gold);
+    color: var(--black);
+    border: none;
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    margin-top: 1.5rem;
+    transition: background 0.2s, opacity 0.2s;
+}
+
+.btn-generate:hover:not(:disabled) { background: var(--gold-dark); }
+.btn-generate:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.generate-status {
+    text-align: center;
+    padding: 0.75rem;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+}
+
+.generate-status.generating { color: var(--gold-dark); }
+.generate-status.error { color: var(--red); }
+
+/* --- Info Box ----------------------------------------------- */
+.info-box {
+    background: var(--gold-light);
+    border-left: 3px solid var(--gold);
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+    color: var(--gray-text);
+    margin-bottom: 1rem;
+}
+
+.info-box strong {
+    color: var(--black);
+}
+
+/* --- Session Pairing ---------------------------------------- */
+.pairing-block {
+    background: var(--white);
+    border: 1px solid var(--gray-lighter);
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.pairing-header {
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+    color: var(--black);
+}
+
+.pairing-row {
+    display: flex;
+    gap: 1rem;
+}
+
+.pairing-field {
+    flex: 1;
+}
+
+.pairing-field label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--gray-text);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.2rem;
+}
+
+.pairing-field select {
+    width: 100%;
+    padding: 0.4rem 0.5rem;
+    font-size: 0.85rem;
+    font-family: var(--font-body);
+    border: 1px solid var(--gray-lighter);
+    background: var(--white);
+}
+
+.pairing-field select:focus {
+    outline: none;
+    border-color: var(--gold);
+}
+
+.pairing-hint {
+    font-size: 0.75rem;
+    color: var(--gray-light);
+    margin-top: 0.35rem;
+}
+
+.hint-ok { color: var(--green); }
+.hint-warn { color: var(--gold-dark); }
+
+/* --- Summary Panel (Preview Page) --------------------------- */
+.summary-panel {
+    background: var(--white);
+    border: 1px solid var(--gray-lighter);
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+/* --- Preview Page ------------------------------------------- */
+.preview-actions {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.btn-action {
+    padding: 0.6rem 1.5rem;
+    text-decoration: none;
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    letter-spacing: 0.04em;
+    text-align: center;
+    transition: opacity 0.2s;
+}
+
+.btn-action:hover { opacity: 0.85; }
+
+.btn-html {
+    background: var(--gold);
+    color: var(--black);
+}
+
+.btn-pdf {
+    background: var(--black);
+    color: var(--gold);
+}
+
+.btn-new {
+    background: var(--white);
+    color: var(--black);
+    border: 2px solid var(--gray-lighter);
+}
+
+.btn-edit {
+    background: var(--white);
+    color: var(--gold-dark);
+    border: 2px solid var(--gold);
+    cursor: pointer;
+}
+
+.preview-frame-wrap {
+    background: var(--white);
+    border: 1px solid var(--gray-lighter);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.preview-frame {
+    width: 100%;
+    height: 80vh;
+    border: none;
+    display: block;
+}
+
+/* --- Responsive --------------------------------------------- */
+@media (max-width: 900px) {
+    .config-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .athlete-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .step-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .preview-frame {
+        height: 60vh;
+    }
+}

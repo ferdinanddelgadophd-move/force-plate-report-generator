@@ -1,0 +1,77 @@
+{% extends "layout.html" %}
+{% block title %}Select Athlete{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="step-header">
+        <div class="step-badge">1</div>
+        <h1>Select Athlete</h1>
+    </div>
+
+    <div class="search-box">
+        <input type="text" id="athlete-search" placeholder="Search athletes..." autocomplete="off">
+    </div>
+
+    <div id="loading" class="loading-state">
+        <div class="spinner"></div>
+        <p>Connecting to Hawkin API...</p>
+    </div>
+
+    <div id="error" class="error-state" style="display:none"></div>
+
+    <div id="athlete-list" class="athlete-grid" style="display:none"></div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const listEl = document.getElementById('athlete-list');
+    const loadingEl = document.getElementById('loading');
+    const errorEl = document.getElementById('error');
+    const searchEl = document.getElementById('athlete-search');
+    let allAthletes = [];
+
+    fetch('/api/athletes')
+        .then(r => r.json())
+        .then(data => {
+            loadingEl.style.display = 'none';
+            if (data.error) {
+                errorEl.textContent = data.error;
+                errorEl.style.display = 'block';
+                return;
+            }
+            allAthletes = data.athletes || [];
+            renderAthletes(allAthletes);
+            listEl.style.display = 'grid';
+        })
+        .catch(err => {
+            loadingEl.style.display = 'none';
+            errorEl.textContent = 'Failed to connect to Hawkin API: ' + err.message;
+            errorEl.style.display = 'block';
+        });
+
+    searchEl.addEventListener('input', function() {
+        const q = this.value.toLowerCase();
+        const filtered = allAthletes.filter(a => a.name.toLowerCase().includes(q));
+        renderAthletes(filtered);
+    });
+
+    function renderAthletes(athletes) {
+        listEl.innerHTML = '';
+        if (athletes.length === 0) {
+            listEl.innerHTML = '<p class="no-results">No athletes found.</p>';
+            return;
+        }
+        athletes.forEach(a => {
+            const card = document.createElement('a');
+            card.href = '/configure/' + a.id;
+            card.className = 'athlete-card';
+            card.innerHTML = `
+                <div class="athlete-name">${a.name}</div>
+                <div class="athlete-arrow">&rarr;</div>
+            `;
+            listEl.appendChild(card);
+        });
+    }
+});
+</script>
+{% endblock %}
